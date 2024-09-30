@@ -1,0 +1,74 @@
+<?php
+session_start();
+$driver_id = 2; // Example driver ID from session or login
+$con = mysqli_connect("localhost", "root", "", "asedb");
+
+if (!$con) {
+    die("Connection failed: " . mysqli_connect_error());
+}
+
+$sql = "SELECT message, created_at FROM tblMessages WHERE driver_id='$driver_id' ORDER BY created_at DESC";
+$result = mysqli_query($con, $sql);
+?>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>City Taxi (PVT) Ltd - Driver Dashboard</title>
+    <style>
+        body {
+            background-image: url('taxiback.jpg'); 
+            height: 607px;
+            background-size: cover;
+            color: black;
+        }
+
+        .notification-container {
+            margin: 100px auto;
+            width: 500px;
+            padding: 20px;
+            border: 2px solid black;
+            background-color: rgba(255, 255, 255, 0.9);
+        }
+
+        .notification-item {
+            margin-bottom: 20px;
+            padding: 10px;
+            border: 1px solid black;
+            background-color: #f1f1f1;
+        }
+
+        h2 {
+            text-align: center;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="notification-container">
+        <center><img src="taxilogo.jpeg" width="200"></center>
+        <h2>Driver Notifications</h2>
+
+        <?php while($row = mysqli_fetch_array($result)) { ?>
+            <div class="notification-item">
+                <strong>Payment Success!</strong><br>
+                <?php echo $row['message']; ?><br>
+                <small><?php echo $row['created_at']; ?></small>
+            </div>
+        <?php } ?>
+
+        <?php if (mysqli_num_rows($result) == 0) { ?>
+            <div class="notification-item">
+                No new notifications.
+            </div>
+        <?php } ?>
+
+    </div>
+
+</body>
+</html>
+
+<?php mysqli_close($con); ?>
